@@ -3,18 +3,18 @@ Parallel-Mandelbrot
 
 ![MandelBrot](/images/mandel.png?raw=true)
 
-Intell TBB, Cilk++, and OpenMP implementations of the Mandelbrot Series
+Intel TBB, Cilk++, and OpenMP implementations of the Mandelbrot Series
 
 Instructions
 ============
 
 Required Libraries/Programs
 ===========================
-- Intel TBB
-- Cilk++
-- OpenMP
-- SDL2
 - gcc
+- Intel TBB
+- Cilk Plus
+- OpenMP (Should be included with gcc)
+- SDL2
 
 Building
 ========
