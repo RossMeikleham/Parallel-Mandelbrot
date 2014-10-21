@@ -23,8 +23,8 @@ simply run the "make" command to build
 Running
 =======
 usage `./mandelbrot type iterations width height`
-type is either "tbb", "cilk", or "openmp", this specifies which implementation to run
-iterations is the number of iterations to run the algorithm for before drawing the result
-width is the number of horizontal pizels
-height is the number of vertical pixels
+- **type** is either "tbb", "cilk", or "openmp", this specifies which implementation to run
+- **iterations** are the number of iterations to run the algorithm for before drawing the result
+- **width** is the number of horizontal pixels
+- **height** is the number of vertical pixels
 
