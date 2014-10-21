@@ -2,6 +2,7 @@
 #include "tbb/parallel_for.h"
 #include "tbb/parallel_for_each.h"
 #include "tbb/task_scheduler_init.h"
+#include <omp.h>
 #include <iostream>
 #include <vector>
 #include <stdio.h>
@@ -87,17 +88,57 @@ int draw_mandelbrot(Point2DVec &v2, int width, int height, int n) {
     return 0;
 }
 
-// Intel TBB version
-void iter_mandelbrot_tbb(Point2DVec &v2) {
-    tbb::parallel_for_each(v2.begin(), v2.end(), 
+
+// No multithreading version
+void iter_mandelbrot_no_mt(Point2DVec &v2) {
+    for_each(v2.begin(), v2.end(), 
         [&](vector<Point> &v) {
-            tbb::parallel_for_each(v.begin(), v.end(), 
+            for_each(v.begin(), v.end(), 
                 [&](Point &p){if (p.absSq() < 20.0) p.next();});
         });
 }
 
-void init_mt(const char* type) {
-    if (!strcmp(type, "tbb")) {tbb::task_scheduler_init init;}
+// Intel TBB version
+void iter_mandelbrot_tbb(Point2DVec &v2) {
+    
+    size_t s = 0;
+    size_t iter= 1;
+    tbb::parallel_for(s, v2.size(), iter,
+        [&](size_t &i) {
+            vector<Point> &v = v2[i];
+            tbb::parallel_for(s, v.size(), iter,
+            [&](size_t &j){
+                Point &p = v[j];
+                if (p.absSq() < 20.0) p.next();
+            });
+        });
+}
+
+// OpenMP version
+void iter_mandelbrot_omp(Point2DVec &v2) {    
+    #pragma omp parallel for
+    for (unsigned i = 0; i < v2.size(); i++) {
+        vector<Point> &v = v2[i];
+        #pragma omp parallel for
+        for (unsigned j = 0; j < v.size(); j++) {
+            Point &p = v[j];
+            if (p.absSq() < 20.0) {
+                p.next();
+            }
+        }
+    
+    }
+}
+
+
+
+typedef void (*iter_fun)(Point2DVec &v);
+
+iter_fun init_mt(const char* type) {
+    if (!strcmp(type, "tbb")) {tbb::task_scheduler_init init; 
+                               return iter_mandelbrot_tbb;}
+    else if (!strcmp(type, "openmp")) {return iter_mandelbrot_omp;}
+    else if (!strcmp(type, "none")) {return iter_mandelbrot_no_mt;}
     else {throw invalid_argument("Supplied type is not valid");}    
 }
 
@@ -134,11 +175,11 @@ int main(int argc, char *argv[]) {
     int height = stoi(argv[4]);
     
 
-init_mt(type);
+iter_fun fn = init_mt(type);
 Point2DVec mBrot =  createInitialMBrot(width, height);
 
 for (int i = 0; i < iterations; i++) {
-    iter_mandelbrot_tbb(mBrot);
+    fn(mBrot);
 }
 
 return draw_mandelbrot(mBrot, width, height, iterations);
