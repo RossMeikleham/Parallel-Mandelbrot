@@ -3,6 +3,7 @@
 #include "tbb/parallel_for_each.h"
 #include "tbb/task_scheduler_init.h"
 #include <omp.h>
+#include <cilk/cilk.h>
 #include <iostream>
 #include <vector>
 #include <stdio.h>
@@ -100,7 +101,9 @@ void iter_mandelbrot_no_mt(Point2DVec &v2) {
 
 // Intel TBB version
 void iter_mandelbrot_tbb(Point2DVec &v2) {
-    
+   // Have to use for version instead of for_each with iterators
+   // parallel_for_each is extremely slow, even more so than the
+   // non multihtreading version, not impressed with TBB at all 
     size_t s = 0;
     size_t iter= 1;
     tbb::parallel_for(s, v2.size(), iter,
@@ -130,7 +133,19 @@ void iter_mandelbrot_omp(Point2DVec &v2) {
     }
 }
 
-
+//cilk plus version
+void iter_mandelbrot_cilk(Point2DVec &v2) {
+    cilk_for (unsigned i = 0; i < v2.size(); i++) {
+        vector<Point> &v = v2[i];
+        cilk_for (unsigned j = 0; j < v.size(); j++) {
+            Point &p = v[j];
+            if (p.absSq() < 20.0) {
+                p.next();
+            }
+        }
+    
+    }
+}
 
 typedef void (*iter_fun)(Point2DVec &v);
 
@@ -138,6 +153,7 @@ iter_fun init_mt(const char* type) {
     if (!strcmp(type, "tbb")) {tbb::task_scheduler_init init; 
                                return iter_mandelbrot_tbb;}
     else if (!strcmp(type, "openmp")) {return iter_mandelbrot_omp;}
+    else if (!strcmp(type, "cilk")) {return itermandelbrot_cilk;}
     else if (!strcmp(type, "none")) {return iter_mandelbrot_no_mt;}
     else {throw invalid_argument("Supplied type is not valid");}    
 }

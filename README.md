@@ -3,7 +3,7 @@ Parallel-Mandelbrot
 
 ![MandelBrot](/images/mandel.png?raw=true)
 
-Intel TBB, Cilk++, and OpenMP implementations of the Mandelbrot Series
+Intel TBB, Cilk Plus, and OpenMP implementations of the Mandelbrot Series
 
 Instructions
 ============
@@ -23,7 +23,7 @@ simply run the "make" command to build
 Running
 =======
 usage `./mandelbrot type iterations width height`
-- **type** is either "tbb", "cilk", or "openmp", this specifies which implementation to run
+- **type** is either "tbb", "cilk", "openmp", or "none" this specifies which implementation to run
 - **iterations** are the number of iterations to run the algorithm for before drawing the result
 - **width** is the number of horizontal pixels
 - **height** is the number of vertical pixels
