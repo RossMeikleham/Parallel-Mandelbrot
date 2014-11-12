@@ -135,7 +135,8 @@ void iter_mandelbrot_omp(Point2DVec &v2) {
 
 //cilk plus version
 void iter_mandelbrot_cilk(Point2DVec &v2) {
-    cilk_for (unsigned i = 0; i < v2.size(); i++) {
+    unsigned i;
+    cilk_for (i = 0; i < v2.size(); i++) {
         vector<Point> &v = v2[i];
         cilk_for (unsigned j = 0; j < v.size(); j++) {
             Point &p = v[j];
