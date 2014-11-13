@@ -18,9 +18,11 @@ Required Libraries/Programs
 - Cilk Plus
 - OpenMP (Should be included with gcc)
 - SDL2
+
 ##Haskell
 - GHC
 - Cabal
+
 ##Python
 - Python 3.4
 - Pygame
