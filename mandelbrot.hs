@@ -1,5 +1,4 @@
 -- MandelBrot implementation in Haskell
--- Initial Code from Rosetta Code
 import Data.Complex
 import System.Environment
 import Control.Parallel.Strategies
