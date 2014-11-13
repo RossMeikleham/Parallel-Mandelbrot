@@ -3,6 +3,13 @@
 import Data.Complex
 import System.Environment
 import Control.Parallel.Strategies
+import Criterion.Measurement
+--import Graphics.UI.SDL 
+
+-- Decent SDL or OpenGL guide + library that isn't out of date
+-- is IMPOSSIBLE to find, this is rediculous.
+-- Hopefully in the near future I can actually display the Mandelbrot
+-- in Haskell. ¬¬ Fucking Hell I just need to write rectangles to a surface
 
 --initSDL :: IO Surface
 --initSDL = do
@@ -28,13 +35,25 @@ mbrot_seq iter w h = [[magnitude (mandelbrot (x :+ y) iter) < 2
 mbrot_par :: Int -> Int -> Int  -> [[Bool]]
 mbrot_par iter w h = (mbrot_seq iter w h) `using` parList rdeepseq
 
+
+draw_image :: Int -> Int -> [[Bool]] -> IO()
+draw_image x y xs = print "to be implemented"
+
 main = do
+    initializeTime
+    start_time <- getTime
     args <- getArgs
-    if (length args < 3) 
-        then print "Expected iterations, image width, and image height"    
+    if (length args < 4) 
+        then print "Expected \"par/seq\"iterations, image width, and image height"    
         else do
-            let nIter = read (args !! 0) :: Int
-            let nWidth = read (args !! 1) :: Int
-            let nHeight = read (args !! 2) :: Int
-            print $ mbrot_seq nIter nWidth nHeight 
+            let nIter = read (args !! 1) :: Int
+            let nWidth = read (args !! 2) :: Int
+            let nHeight = read (args !! 3) :: Int
+            case (args !! 0) of 
+                "seq" -> print $ mbrot_seq nIter nWidth nHeight 
+                "par" -> print $ mbrot_par nIter nWidth nHeight 
+                otherwise -> print "expected first argument to be `par` or `seq`"
+            end_time <- getTime
+            print $ "Time elapsed : " ++ show (floor $ 10000 * (end_time - start_time)) ++ "ms"
+               
 
