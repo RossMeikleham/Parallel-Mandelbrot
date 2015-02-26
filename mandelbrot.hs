@@ -5,10 +5,6 @@ import Control.Parallel.Strategies
 import Criterion.Measurement
 --import Graphics.UI.SDL 
 
--- Decent SDL or OpenGL guide + library that isn't out of date
--- is IMPOSSIBLE to find, this is rediculous.
--- Hopefully in the near future I can actually display the Mandelbrot
--- in Haskell. ¬¬ Fucking Hell I just need to write rectangles to a surface
 
 --initSDL :: IO Surface
 --initSDL = do
